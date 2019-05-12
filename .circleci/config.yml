@@ -1,0 +1,50 @@
+# Use the latest 2.1 version of CircleCI pipeline processing engine, see https://circleci.com/docs/2.0/configuration-reference/
+version: 2.1
+
+# Use a package of configuration called an orb, see https://circleci.com/docs/2.0/orb-intro/
+orbs:
+  # Declare a dependency on the heroku orb
+  heroku: circleci/heroku@0.0.6
+
+jobs:
+  python-safety:
+    docker:
+      - image: circleci/python:3.6.4
+    steps:
+      - checkout  # checkout source code to working directory
+      - run:
+          command: |  # use pipenv to install dependencies
+            sudo pip install pipenv
+            pipenv install
+            pipenv install safety
+      - run:
+          command: |
+            pipenv run safety check --file requirements.txt --full-report
+  dast:
+    docker:
+      - image: alpine:3.7
+    steps:
+      - run:
+          command: |
+            mkdir -p ~/crashtest
+            apk add curl jq libxml2-utils
+            SCAN_ID=`curl --silent -X POST --data "" https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK} | jq .data.scanId`
+            echo "Started Scan. Scan ID is $SCAN_ID."
+            STATUS="100"
+            while [[ ${STATUS} -le "101" ]]; do echo "Scan Status currently is $STATUS (101 = Running)"; sleep 60; STATUS=`curl --silent https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK}/scans/${SCAN_ID}/status | jq .data.status.code`; done
+            echo "Scan finished with status ${STATUS}."
+            curl --silent https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK}/scans/${SCAN_ID}/report/junit -o ~/crashtest/report.xml
+            echo "Downloaded Report to ~/crashtest/report.xml"
+            FINDINGS_COUNT=`xmllint --xpath 'string(//testsuites/testsuite/@failures)' ~/crashtest/report.xml`
+            echo "Found $FINDINGS_COUNT findings. Test will fail if 15 or more findings."
+            if [[ ${FINDINGS_COUNT} -ge "15" ]]; then exit 1; else exit 0; fi
+      - store_test_results:
+          path: ~/crashtest
+
+# Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
+workflows:
+  # Name the workflow "sast-deploy-dast"
+  sast-deploy-dast:
+    jobs:
+      # Deploy to Heroku
+      - heroku/deploy-via-git
