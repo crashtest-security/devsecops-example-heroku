@@ -20,35 +20,35 @@ This application is used within workshops hold by [Crashtest Security](https://c
 
 ### Create Accounts
 
-- [GitHub](https://github.com): Create an account to get access to the source code of this example projcet
+- [GitHub](https://github.com): Create an account to get access to the source code of this example project
 - [CircleCI](https://circleci.com/signup/): Login using GitHub to grant CircleCI access to your GitHub projects
 - [Heroku](https://heroku.com): Create an account to deploy the example application there
-- [Crashtest Security](https://crashtest.cloud): Create an account te conduct a dynamic vulnerability scan
+- [Crashtest Security](https://crashtest.cloud): Create an account to conduct a dynamic vulnerability scan
 
 ### Fork the Repository
 
-To get access to the repository code, fork this repository by clicking the "Fork" button on the to right: https://github.com/Phylu/devsecops-example-heroku
+To get access to the repository code, fork this repository by clicking the "Fork" button on the top right: https://github.com/crashtest-security/devsecops-example-heroku
 
 ![Fork Repository](/res/01_github.png)
 
-You will get your own copy of the code repository get redirected to your own repository page on github.
+This will create your own copy of the code repository and redirect you to the repository page.
 
 ### Configure Heroku to be used with this project
 
 - Create a new application within Heroku: https://dashboard.heroku.com/new-app. You may choose any name and region you like. Just remember the name of your new Heroku app. We will refer to the name of your Heroku app as `HEROKU_APP_NAME`. For this tutorial, I have named the application `sigs-devsecops-example`
-- Go to the app settings, click on "Reveal Config Vars" and add a new environment variable `DISABLE_COLLECTSTATIC = 1`
+- Go to the app settings, click on "Reveal Config Vars" and add a new environment variable `DISABLE_COLLECTSTATIC = 1`. This is needed for the Django application to run properly on heroku. If you miss to set this environment variable you will later see an error message during the corresponding build step.
 - When you click on "Open App", you should see a default page from Heroku that states that you have no application running yet.
 
 ![Heroku Environment Variable](/res/02_heroku.png)
 
-- Retrieve your Heroku API key here: https://dashboard.heroku.com/account (At the bottom of the page). You need this API key to grant CircleCI the access to deploy your application. We will refer to this variable as `HEROKU_API_KEY`.
+- Retrieve your Heroku API key here: https://dashboard.heroku.com/account (At the bottom of the page). You need this API key to grant CircleCI access to deploy your application. We will refer to this variable as `HEROKU_API_KEY`.
 
 
 ### Link GitHub Repository with CircleCI Workflow
 
 - Open the CircleCI dashboard: https://circleci.com/dashboard. When you get asked for login credentials, log in using your GitHub account. This grants CircleCI access permissions to get the code from your repository.
 - Add your GitHub Repository to CircleCI by clicking "Add Projects" in the left menu bar and then on "Set Up Project"
-- Chose "Workflows" in the left menu bar end then click on the little gear symbol next to your project
+- Choose "Workflows" in the left menu bar and then click on the little gear symbol next to your project
 - Configure the following two environment variables:
 
     - `HEROKU_APP_NAME` - Enter the name that you previously chose
@@ -72,11 +72,11 @@ You will get your own copy of the code repository get redirected to your own rep
 
 ![Successful Build in CircleCI](/res/05_circleci.png)
 
-- The build deploys the application any you can now access it from Heroku by clicking the "Open App" button.
+- The build deploys the application and you can now access it from Heroku by clicking the "Open App" button.
 
 ![Running Application](/res/06_application.png)
 
-- You can see that the application contains a Cross-Site-Scripting vulnerability by typing tho following as your name within the application. This will make the browser show an alert box as it is interpreting your provided JavaScript:
+- You can see that the application contains a Cross-Site-Scripting vulnerability by typing the following as your name within the application. This will make the browser show an alert box as it is interpreting your provided JavaScript:
 
 ```html
 <script>alert("XSS")</script>
@@ -104,7 +104,7 @@ You will get your own copy of the code repository get redirected to your own rep
 - To integrate a dynamic vulnerability scan using the Crashtest Security Suite, log in on https://crashtest.cloud and create a new project with the following settings:
 
     - Project Type: Multi Page Application
-    - Title: Chose a title you like
+    - Title: Choose a title you like
     - Protocol: https
     - URL: The URL that your application is running (Copy from your browser address bar after clicking on "Open App" in Heroku).
 
@@ -116,7 +116,7 @@ You will get your own copy of the code repository get redirected to your own rep
 
 ![Add Verification File](/res/10_github.png)
 
-- Generate a Weebhook within the Crashtest Security Suite. Go to the project preferences and click on "Generate" in the Webhook section
+- Generate a Webhook within the Crashtest Security Suite. Go to the project preferences and click on "Generate" in the Webhook section
 
 ![Generate Crashtest Security Suite Webhook](/res/11_crashtest.png)
 
