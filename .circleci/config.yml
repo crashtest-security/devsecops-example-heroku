@@ -35,9 +35,9 @@ jobs:
             echo "Scan finished with status ${STATUS}."
             curl --silent https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK}/scans/${SCAN_ID}/report/junit -o ~/crashtest/report.xml
             echo "Downloaded Report to ~/crashtest/report.xml"
-            FINDINGS_COUNT=`xmllint --xpath 'string(//testsuites/testsuite/@failures)' ~/crashtest/report.xml`
-            echo "Found $FINDINGS_COUNT findings. Test will fail if 22 or more findings."
-            if [[ ${FINDINGS_COUNT} -ge "22" ]]; then exit 1; else exit 0; fi
+            FINDINGS_COUNT=`xmllint --xpath 'count(//testcase[@classname="xss.crashtest.cloud"]/failure)' ~/crashtest/report.xml`
+            echo "Found $FINDINGS_COUNT XSS findings. Test will fail if at least one XSS finding is present."
+            if [[ ${FINDINGS_COUNT} -ge "1" ]]; then exit 1; else exit 0; fi
       - store_test_results:
           path: ~/crashtest
   deploy:
