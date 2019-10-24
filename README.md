@@ -87,8 +87,7 @@ This will create your own copy of the code repository and redirect you to the re
 - To enable the dependency check of all python dependencies in the build, add the following lines at the end of the file `devsecops-example-heroku/vulnerable/.circleci/config.yml` (make sure that the indentation matches).
 
 ```yaml
-      # Run python safety check
-      - python-safety
+      - sast
 ```
 
 ![Add DAST Scan](/res/07_github.png)
@@ -132,7 +131,7 @@ This will create your own copy of the code repository and redirect you to the re
       # Start Crashtest Security Suite
       - dast:
           requires:
-            - heroku/deploy-via-git
+            - deploy
 
 ```
 
