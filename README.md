@@ -48,7 +48,8 @@ This will create your own copy of the code repository and redirect you to the re
 
 - Open the CircleCI dashboard: https://circleci.com/dashboard. When you get asked for login credentials, log in using your GitHub account. This grants CircleCI access permissions to get the code from your repository.
 - Add your GitHub Repository to CircleCI by clicking "Add Projects" in the left menu bar and then on "Set Up Project"
-- Choose "Workflows" in the left menu bar and then click on the little gear symbol next to your project
+- Open the newly added project (pipeline) and click on "Project Settings" on the top right
+- Choose "Environment variables" in the left menu bar
 - Configure the following two environment variables:
 
     - `HEROKU_APP_NAME` - Enter the name that you previously chose
@@ -84,7 +85,7 @@ This will create your own copy of the code repository and redirect you to the re
 
 ### Enable Python Safety (SAST) Build Step
 
-- To enable the dependency check of all python dependencies in the build, add the following lines at the end of the file `devsecops-example-heroku/vulnerable/.circleci/config.yml` (make sure that the indentation matches).
+- To enable the dependency check of all python dependencies in the build, add the following lines at the end of the file `devsecops-example-heroku/.circleci/config.yml` (make sure that the indentation matches).
 
 ```yaml
       - sast
@@ -100,14 +101,18 @@ This will create your own copy of the code repository and redirect you to the re
 
 ### Enable Crashtest Security (DAST) Build Step
 
-- To integrate a dynamic vulnerability scan using the Crashtest Security Suite, log in on https://crashtest.cloud and create a new project with the following settings:
+- To integrate a dynamic vulnerability scan using the Crashtest Security Suite, log in on https://crashtest.cloud and create a new scan target with the following settings:
 
     - Project Type: Multi Page Application
     - Title: Choose a title you like
     - Protocol: https
     - URL: The URL that your application is running (Copy from your browser address bar after clicking on "Open App" in Heroku).
+    
+- Click "Continue"
+- Choose the "Full Scan" scope to check for all possible vulnerabilities
 
-- Click on Verify Project to download the verification file. You need this file to allow the Crashtest Security Suite to scan your application.
+- Click "Create"
+- Click on "Verify Scan Target" to download the verification file. You need this file to allow the Crashtest Security Suite to scan your application.
 
 ![Download Verification File](/res/09_crashtest.png)
 
@@ -125,7 +130,7 @@ This will create your own copy of the code repository and redirect you to the re
 
 ![Configure Webhook in CircleCI](/res/12_circleci.png)
 
-- Now enable the dynamic vulnerability scan for your application by adding the following lines at the end of the file `devsecops-example-heroku/vulnerable/.circleci/config.yml` (make sure that the indentation matches, the line "requires" has 4 additional whitespaces of indentation compared to the line before).
+- Now enable the dynamic vulnerability scan for your application by adding the following lines at the end of the file `devsecops-example-heroku/.circleci/config.yml` (make sure that the indentation matches, the line "requires" has 4 additional whitespaces of indentation compared to the line before).
 
 ```yaml
       # Start Crashtest Security Suite
