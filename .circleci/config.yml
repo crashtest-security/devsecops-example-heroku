@@ -31,7 +31,7 @@ jobs:
             SCAN_ID=`curl --silent -X POST --data "" https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK} | jq .data.scanId`
             echo "Started Scan. Scan ID is $SCAN_ID."
             STATUS="100"
-            while [[ ${STATUS} -le "101" ]]; do echo "Scan Status currently is $STATUS (101 = Running)"; sleep 60; STATUS=`curl --silent https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK}/scans/${SCAN_ID}/status | jq .data.status.code`; done
+            while [[ ${STATUS} -le "101" ]]; do echo "Scan Status currently is $STATUS (101 = Running)"; sleep 60; STATUS=`curl --silent https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK}/scans/${SCAN_ID}/status | jq .data.status.status_code`; done
             echo "Scan finished with status ${STATUS}."
             curl --silent https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK}/scans/${SCAN_ID}/report/junit -o ~/crashtest/report.xml
             echo "Downloaded Report to ~/crashtest/report.xml"
