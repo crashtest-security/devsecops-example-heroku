@@ -22,24 +22,14 @@ jobs:
             pipenv run safety check --file requirements.txt --full-report
   dast:
     docker:
-      - image: alpine:3.7
+      - image: alpine:latest
     steps:
+      - checkout
       - run:
-          command: |
-            mkdir -p ~/crashtest
-            apk add curl jq libxml2-utils
-            SCAN_ID=`curl --silent -X POST --data "" https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK} | jq .data.scanId`
-            echo "Started Scan. Scan ID is $SCAN_ID."
-            STATUS="100"
-            while [[ ${STATUS} -le "101" ]]; do echo "Scan Status currently is $STATUS (101 = Running)"; sleep 60; STATUS=`curl --silent https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK}/scans/${SCAN_ID}/status | jq .data.status.status_code`; done
-            echo "Scan finished with status ${STATUS}."
-            curl --silent https://api.crashtest.cloud/webhook/${CRASHTEST_WEBHOOK}/scans/${SCAN_ID}/report/junit -o ~/crashtest/report.xml
-            echo "Downloaded Report to ~/crashtest/report.xml"
-            FINDINGS_COUNT=`xmllint --xpath 'count(//testcase[@classname="xss.crashtest.cloud"]/failure)' ~/crashtest/report.xml`
-            echo "Found $FINDINGS_COUNT XSS findings. Test will fail if at least one XSS finding is present."
-            if [[ ${FINDINGS_COUNT} -ge "1" ]]; then exit 1; else exit 0; fi
+          command: sh start_crashtest.sh $CRASHTEST_WEBHOOK
       - store_test_results:
           path: ~/crashtest
+
   deploy:
     executor: heroku/default
     steps:
