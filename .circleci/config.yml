@@ -26,7 +26,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: sh start_crashtest.sh $CRASHTEST_WEBHOOK
+          command: sh start_crashtest_circleci.sh $CRASHTEST_WEBHOOK
       - store_test_results:
           path: ~/crashtest
 

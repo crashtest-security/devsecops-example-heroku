@@ -1,0 +1,6 @@
+before_install:
+  - sudo apt-get -y install curl jq
+jobs:
+  include:
+    - stage: Run Crashtest Security Scan
+      script: bash start_crashtest_travis.sh $CRASHTEST_WEBHOOK
