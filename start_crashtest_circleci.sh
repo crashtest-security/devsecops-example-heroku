@@ -12,10 +12,8 @@ WEBHOOK=$1
 API_ENDPOINT="https://api.crashtest.cloud/webhook"
 
 #### Setup the alpine system ####
-
-apk add curl jq
+apk add curl jq libxml2-utils
 mkdir -p ~/crashtest
-
 
 #### Start Security Scan ####
 
@@ -49,3 +47,11 @@ echo "Scan finished with status $STATUS."
 
 curl --silent $API_ENDPOINT/$WEBHOOK/scans/$SCAN_ID/report/junit -o ~/crashtest/report.xml
 echo "Downloaded Report to crashtest/report.xml"
+
+# Count XSS findings
+FINDINGS_COUNT=`xmllint --xpath 'count(//testcase[@classname="xss.crashtest.cloud"]/failure)' ~/crashtest/report.xml`	
+
+echo "Found $FINDINGS_COUNT XSS findings. Test will fail if at least one XSS finding is present."	
+
+# Check if at least one XSS finding has been found
+if [[ ${FINDINGS_COUNT} -ge "1" ]]; then exit 1; else exit 0; fi
