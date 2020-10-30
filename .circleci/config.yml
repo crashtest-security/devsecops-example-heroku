@@ -44,4 +44,4 @@ workflows:
   workflow:
     jobs:
       - deploy
-      - stats
+      - sast
