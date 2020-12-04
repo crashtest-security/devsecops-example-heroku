@@ -1,0 +1,7 @@
+steps:
+- name: gcr.io/cloud-builders/gcloud
+  entrypoint: 'bash'
+  args: [ '-c', "gcloud secrets versions access latest --secret=crashtest-webhook --format='get(payload.data)' | tr '_-' '/+' | base64 -d > webhook.txt" ]
+- name: alpine:latest
+  entrypoint: 'sh'
+  args: ['-c', 'sh start_crashtest_cloudbuild.sh $(cat webhook.txt)']
