@@ -1,0 +1,6 @@
+pipelines:
+  default:
+    - step:
+        name: Run Crashtest Security Scan
+        script:
+        - bash start_crashtest_bitbucket.sh $CRASHTEST_WEBHOOK

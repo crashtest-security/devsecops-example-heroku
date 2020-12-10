@@ -1,0 +1,7 @@
+Crashtest Security Scan:
+  image: alpine:latest
+  script: "sh start_crashtest_gitlab.sh $CRASHTEST_WEBHOOK"
+  artifacts:
+    when: always
+    reports:
+      junit: test-reports/report.xml

@@ -11,9 +11,11 @@ WEBHOOK=$1
 # Set the API endpoint
 API_ENDPOINT="https://api.crashtest.cloud/webhook"
 
-echo $PATH
-which curl
-which jq
+
+#### Setup the build system ####
+
+apk add curl jq
+
 
 #### Start Security Scan ####
 
@@ -38,13 +40,13 @@ STATUS=100
 # Run the scan until the status is not queued (100) or running (101) anymore
 while [ $STATUS -le 101 ]
 do
-    echo "Scan Status currently is $STATUS (101 = Running)"
+   echo "Scan Status currently is $STATUS (101 = Running)"
 
-    # Only poll every minute
-    sleep 60
+   # Only poll every minute
+   sleep 60
 
-    # Refresh status
-    STATUS=`curl --silent $API_ENDPOINT/$WEBHOOK/scans/$SCAN_ID/status | jq .data.status.status_code`
+   # Refresh status
+   STATUS=`curl --silent $API_ENDPOINT/$WEBHOOK/scans/$SCAN_ID/status | jq .data.status.status_code`
 
 done
 
