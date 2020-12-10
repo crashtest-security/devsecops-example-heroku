@@ -1,7 +1,7 @@
 on: [push]
 
 jobs:
-  hello_world_job:
+  crashtest_security_scan:
     runs-on: ubuntu-latest
     name: Run Crashtest Security Scan
     steps:
