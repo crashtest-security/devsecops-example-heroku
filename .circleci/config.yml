@@ -36,7 +36,7 @@ jobs:
       - checkout
       - heroku/install
       - heroku/deploy-via-git:
-          only-branch: master
+          only-branch: workshop
           force: true
 
 # Orchestrate or schedule a set of jobs, see https://circleci.com/docs/2.0/workflows/
